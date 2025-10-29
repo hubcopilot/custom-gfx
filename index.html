@@ -15,7 +15,6 @@
       font-family: "Creepster", cursive;
     }
 
-    /* Stage box */
     .stage {
       position: relative;
       width: 1000px;
@@ -24,19 +23,17 @@
       overflow: hidden;
     }
 
-    /* ---- NIGHT SKY ---- */
+    /* ---- MOON ---- */
     .moon {
       position: absolute;
       top: 40px;
       right: 60px;
-      width: 120px;
-      height: 120px;
-      background: radial-gradient(circle at center, #fff 0%, #ffe066 30%, rgba(255,255,255,0) 70%);
-      border-radius: 50%;
-      box-shadow: 0 0 40px #fff, 0 0 80px #ffe066;
+      width: 180px;
+      height: auto;
       z-index: 1;
     }
 
+    /* ---- STARS ---- */
     .star {
       position: absolute;
       width: 3px;
@@ -46,7 +43,6 @@
       opacity: 0.8;
       animation: twinkle 2s infinite ease-in-out;
     }
-
     @keyframes twinkle {
       0%,100% { opacity: 0.2; transform: scale(1); }
       50% { opacity: 1; transform: scale(1.3); }
@@ -105,7 +101,7 @@
       to { filter: drop-shadow(0 0 20px #ffaa33) drop-shadow(0 0 35px #ff3300); }
     }
 
-    /* Fog */
+    /* Fog (H4R only) */
     .fog {
       position: absolute;
       bottom: -10px;
@@ -115,11 +111,9 @@
       border-radius: 50%;
       transition: opacity 1.5s ease;
       pointer-events: none;
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
     }
-    .fog.h4r { background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%); }
-    .fog.h4r.active { opacity: 0.6; }
-    .fog.rytober { background: radial-gradient(ellipse at center, rgba(180,0,255,0.4) 0%, rgba(0,255,180,0.25) 40%, rgba(0,0,0,0) 70%); }
-    .fog.rytober.active { opacity: 0.55; }
+    .fog.active { opacity: 0.6; }
 
     .fog1 { width: 350px; height: 160px; animation: drift1 14s infinite ease-in-out; }
     .fog2 { width: 420px; height: 200px; bottom: -20px; opacity: 0.5; animation: drift2 18s infinite ease-in-out; }
@@ -155,8 +149,9 @@
 </head>
 <body>
   <div class="stage">
-    <!-- Moon -->
-    <div class="moon"></div>
+    <!-- Moon with PNG -->
+    <img src="assets/moon.png" class="moon" alt="Moon"/>
+
     <!-- Stars container -->
     <div id="stars"></div>
 
@@ -170,14 +165,9 @@
       <img src="assets/pumpkin.png" class="pumpkin right" alt="Pumpkin"/>
 
       <!-- Fog for H4R -->
-      <div id="fogH1" class="fog fog1 h4r"></div>
-      <div id="fogH2" class="fog fog2 h4r"></div>
-      <div id="fogH3" class="fog fog3 h4r"></div>
-
-      <!-- Fog for Rytober -->
-      <div id="fogR1" class="fog fog1 rytober"></div>
-      <div id="fogR2" class="fog fog2 rytober"></div>
-      <div id="fogR3" class="fog fog3 rytober"></div>
+      <div id="fogH1" class="fog fog1"></div>
+      <div id="fogH2" class="fog fog2"></div>
+      <div id="fogH3" class="fog fog3"></div>
     </div>
 
     <!-- Bats container -->
@@ -187,21 +177,17 @@
   <script>
     const h4r = document.getElementById("h4r");
     const rytober = document.getElementById("rytober");
-
     const fogH = [fogH1, fogH2, fogH3];
-    const fogR = [fogR1, fogR2, fogR3];
 
-    // Switch between logos
+    // Switch logos
     setInterval(() => {
       if (h4r.classList.contains("active")) {
         h4r.classList.remove("active");
         rytober.classList.add("active");
         fogH.forEach(f => f.classList.remove("active"));
-        fogR.forEach(f => f.classList.add("active"));
       } else {
         rytober.classList.remove("active");
         h4r.classList.add("active");
-        fogR.forEach(f => f.classList.remove("active"));
         fogH.forEach(f => f.classList.add("active"));
       }
     }, 6000);
