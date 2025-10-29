@@ -42,7 +42,7 @@
       height: auto;
       transform: translate(-50%, -50%) scale3d(1,1,1);
       opacity: 0;
-      will-change: transform, opacity; /* smooth GPU hint */
+      will-change: transform, opacity;
       transition: opacity 1.2s ease, transform 1.2s ease;
     }
 
@@ -61,7 +61,7 @@
       75% { transform: translate(-50%, -50%) scale(1.06) rotateX(2deg) rotateY(-2deg); }
     }
 
-    /* Pumpkins + cobwebs wrap logo */
+    /* Overlay decorations (pumpkins + fog around H4R only) */
     .overlay {
       position: absolute;
       top: 50%;
@@ -73,31 +73,45 @@
       z-index: 5;
     }
 
-    .overlay img {
-      position: absolute;
-      opacity: 0.25; /* low ghostly opacity */
-    }
-
+    /* Pumpkins smaller + to sides */
     .pumpkin {
-      width: 120px;
-      bottom: 10px;
-      filter: drop-shadow(0 0 15px #ff9900);
+      width: 80px;
+      filter: drop-shadow(0 0 10px #ff9900);
       animation: glowPumpkin 2.5s infinite alternate;
+      opacity: 0.3;
     }
-    .pumpkin.left { left: 60px; bottom: 50px; }
-    .pumpkin.right { right: 60px; bottom: 50px; }
+    .pumpkin.left { left: 0; top: 50%; transform: translateY(-50%); }
+    .pumpkin.right { right: 0; top: 50%; transform: translateY(-50%); }
 
     @keyframes glowPumpkin {
-      from { filter: drop-shadow(0 0 10px #ff6600); }
-      to { filter: drop-shadow(0 0 25px #ffaa33) drop-shadow(0 0 40px #ff3300); }
+      from { filter: drop-shadow(0 0 5px #ff6600); }
+      to { filter: drop-shadow(0 0 20px #ffaa33) drop-shadow(0 0 35px #ff3300); }
     }
 
-    .cobweb {
-      width: 160px;
-      filter: drop-shadow(0 0 6px #aaa);
+    /* Fog effect (appears only when H4R is active) */
+    .fog {
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      width: 350px;
+      height: 160px;
+      opacity: 0;
+      transform: translateX(-50%);
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      animation: drift 10s infinite ease-in-out;
+      transition: opacity 1.5s ease;
     }
-    .cobweb.tl { top: 0; left: 0; }
-    .cobweb.tr { top: 0; right: 0; transform: scaleX(-1); }
+
+    .fog.active {
+      opacity: 0.35;
+    }
+
+    @keyframes drift {
+      0% { transform: translateX(-60%) scale(1); }
+      50% { transform: translateX(-40%) scale(1.1); }
+      100% { transform: translateX(-60%) scale(1); }
+    }
   </style>
 </head>
 <body>
@@ -107,12 +121,11 @@
       <img id="h4r" src="assets/h4r-logo-heart.png" class="active" alt="H4R Logo"/>
       <img id="rytober" src="assets/rytober.png" alt="Rytober Logo"/>
 
-      <!-- Overlay pumpkins & cobwebs (around logo only) -->
+      <!-- Overlay: pumpkins + fog (for H4R only) -->
       <div class="overlay">
         <img src="assets/pumpkin.png" class="pumpkin left" alt="Pumpkin"/>
         <img src="assets/pumpkin.png" class="pumpkin right" alt="Pumpkin"/>
-        <img src="assets/cobweb.png" class="cobweb tl" alt="Cobweb"/>
-        <img src="assets/cobweb.png" class="cobweb tr" alt="Cobweb"/>
+        <div id="fog" class="fog"></div>
       </div>
     </div>
   </div>
@@ -120,14 +133,19 @@
   <script>
     const h4r = document.getElementById("h4r");
     const rytober = document.getElementById("rytober");
+    const fog = document.getElementById("fog");
 
     setInterval(() => {
       if (h4r.classList.contains("active")) {
+        // Switch to Rytober
         h4r.classList.remove("active");
         rytober.classList.add("active");
+        fog.classList.remove("active");
       } else {
+        // Switch to H4R
         rytober.classList.remove("active");
         h4r.classList.add("active");
+        fog.classList.add("active");
       }
     }, 6000); // switch every 6s
   </script>
