@@ -24,6 +24,35 @@
       overflow: hidden;
     }
 
+    /* ---- NIGHT SKY ---- */
+    .moon {
+      position: absolute;
+      top: 40px;
+      right: 60px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle at center, #fff 0%, #ffe066 30%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      box-shadow: 0 0 40px #fff, 0 0 80px #ffe066;
+      z-index: 1;
+    }
+
+    .star {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out;
+    }
+
+    @keyframes twinkle {
+      0%,100% { opacity: 0.2; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* ---- LOGOS ---- */
     .logo-container {
       position: absolute;
       top: 50%;
@@ -54,7 +83,6 @@
       filter: drop-shadow(0 0 20px #ff6600) drop-shadow(0 0 40px #ff3300);
     }
 
-    /* 3D wobble */
     @keyframes wobble {
       0%,100% { transform: translate(-50%, -50%) scale(1.05) rotateX(0deg) rotateY(0deg); }
       25% { transform: translate(-50%, -50%) scale(1.07) rotateX(3deg) rotateY(-3deg); }
@@ -62,7 +90,7 @@
       75% { transform: translate(-50%, -50%) scale(1.06) rotateX(2deg) rotateY(-2deg); }
     }
 
-    /* Pumpkins (smaller, at sides of H4R) */
+    /* Pumpkins */
     .pumpkin {
       width: 80px;
       filter: drop-shadow(0 0 10px #ff9900);
@@ -77,32 +105,43 @@
       to { filter: drop-shadow(0 0 20px #ffaa33) drop-shadow(0 0 35px #ff3300); }
     }
 
-    /* Fog (only when H4R is active) */
+    /* Fog */
     .fog {
       position: absolute;
       bottom: -10px;
       left: 50%;
-      width: 350px;
-      height: 160px;
       opacity: 0;
       transform: translateX(-50%);
-      background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
       border-radius: 50%;
-      animation: drift 10s infinite ease-in-out;
       transition: opacity 1.5s ease;
+      pointer-events: none;
     }
-    
-    .fog.active {
-      opacity: 0.6; /* a bit stronger since it's white now */
-    }
+    .fog.h4r { background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%); }
+    .fog.h4r.active { opacity: 0.6; }
+    .fog.rytober { background: radial-gradient(ellipse at center, rgba(180,0,255,0.4) 0%, rgba(0,255,180,0.25) 40%, rgba(0,0,0,0) 70%); }
+    .fog.rytober.active { opacity: 0.55; }
 
-    @keyframes drift {
+    .fog1 { width: 350px; height: 160px; animation: drift1 14s infinite ease-in-out; }
+    .fog2 { width: 420px; height: 200px; bottom: -20px; opacity: 0.5; animation: drift2 18s infinite ease-in-out; }
+    .fog3 { width: 300px; height: 140px; bottom: 10px; opacity: 0.4; animation: drift3 12s infinite ease-in-out; }
+
+    @keyframes drift1 {
       0% { transform: translateX(-60%) scale(1); }
       50% { transform: translateX(-40%) scale(1.1); }
       100% { transform: translateX(-60%) scale(1); }
     }
+    @keyframes drift2 {
+      0% { transform: translateX(-55%) scale(1); }
+      50% { transform: translateX(-35%) scale(1.15); }
+      100% { transform: translateX(-55%) scale(1); }
+    }
+    @keyframes drift3 {
+      0% { transform: translateX(-65%) scale(1); }
+      50% { transform: translateX(-45%) scale(1.05); }
+      100% { transform: translateX(-65%) scale(1); }
+    }
 
-    /* Bat styling */
+    /* Bats */
     .bat {
       position: absolute;
       top: 0;
@@ -116,16 +155,31 @@
 </head>
 <body>
   <div class="stage">
+    <!-- Moon -->
+    <div class="moon"></div>
+    <!-- Stars container -->
+    <div id="stars"></div>
+
     <div class="logo-container">
       <!-- Logos -->
       <img id="h4r" src="assets/h4r-logo-heart.png" class="active" alt="H4R Logo"/>
       <img id="rytober" src="assets/rytober.png" alt="Rytober Logo"/>
 
-      <!-- Pumpkins + fog (only show with H4R) -->
+      <!-- Pumpkins -->
       <img src="assets/pumpkin.png" class="pumpkin left" alt="Pumpkin"/>
       <img src="assets/pumpkin.png" class="pumpkin right" alt="Pumpkin"/>
-      <div id="fog" class="fog"></div>
+
+      <!-- Fog for H4R -->
+      <div id="fogH1" class="fog fog1 h4r"></div>
+      <div id="fogH2" class="fog fog2 h4r"></div>
+      <div id="fogH3" class="fog fog3 h4r"></div>
+
+      <!-- Fog for Rytober -->
+      <div id="fogR1" class="fog fog1 rytober"></div>
+      <div id="fogR2" class="fog fog2 rytober"></div>
+      <div id="fogR3" class="fog fog3 rytober"></div>
     </div>
+
     <!-- Bats container -->
     <div id="bats"></div>
   </div>
@@ -133,39 +187,37 @@
   <script>
     const h4r = document.getElementById("h4r");
     const rytober = document.getElementById("rytober");
-    const fog = document.getElementById("fog");
-    const batsContainer = document.getElementById("bats");
 
-    // Smooth switching between logos
+    const fogH = [fogH1, fogH2, fogH3];
+    const fogR = [fogR1, fogR2, fogR3];
+
+    // Switch between logos
     setInterval(() => {
       if (h4r.classList.contains("active")) {
         h4r.classList.remove("active");
         rytober.classList.add("active");
-        fog.classList.remove("active");
+        fogH.forEach(f => f.classList.remove("active"));
+        fogR.forEach(f => f.classList.add("active"));
       } else {
         rytober.classList.remove("active");
         h4r.classList.add("active");
-        fog.classList.add("active");
+        fogR.forEach(f => f.classList.remove("active"));
+        fogH.forEach(f => f.classList.add("active"));
       }
     }, 6000);
 
-    // Function to spawn bats with random properties
+    // ---- BATS ----
+    const batsContainer = document.getElementById("bats");
     function spawnBat() {
       const bat = document.createElement("img");
       bat.src = "assets/bats.png";
       bat.classList.add("bat");
-
-      // Random size, speed, and vertical position
-      const size = Math.random() * 60 + 40; // 40–100px
-      const duration = Math.random() * 10 + 6; // 6–16s
-      const top = Math.random() * 900; // within 1000px stage
-      const delay = Math.random() * 5; // 0–5s
-
+      const size = Math.random() * 60 + 40;
+      const duration = Math.random() * 8 + 8;
+      const top = Math.random() * 900;
+      const delay = Math.random() * 3;
       bat.style.width = size + "px";
       bat.style.top = top + "px";
-      bat.style.animation = `fly ${duration}s linear ${delay}s infinite`;
-
-      // Keyframes unique per bat (random path)
       const id = "fly" + Math.floor(Math.random() * 100000);
       const keyframes = `
         @keyframes ${id} {
@@ -178,16 +230,22 @@
       const style = document.createElement("style");
       style.innerHTML = keyframes;
       document.head.appendChild(style);
-
-      bat.style.animationName = id;
+      bat.style.animation = `${id} ${duration}s linear ${delay}s infinite`;
       batsContainer.appendChild(bat);
-
-      // Remove bat after cycle to prevent DOM bloat
       setTimeout(() => { bat.remove(); style.remove(); }, (duration + delay) * 1000);
     }
+    setInterval(spawnBat, 2500);
 
-    // Spawn bats repeatedly
-    setInterval(spawnBat, 2000); // every 2s a new bat spawns
+    // ---- STARS ----
+    const starsContainer = document.getElementById("stars");
+    for (let i = 0; i < 40; i++) {
+      const star = document.createElement("div");
+      star.classList.add("star");
+      star.style.top = Math.random() * 1000 + "px";
+      star.style.left = Math.random() * 1000 + "px";
+      star.style.animationDuration = (Math.random() * 2 + 1) + "s";
+      starsContainer.appendChild(star);
+    }
   </script>
 </body>
 </html>
