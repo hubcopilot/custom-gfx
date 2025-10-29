@@ -31,6 +31,16 @@
       width: 180px;
       height: auto;
       z-index: 1;
+      opacity: 1;
+      transition: opacity 1.5s ease;
+      animation: pulseMoon 6s infinite ease-in-out;
+    }
+    @keyframes pulseMoon {
+      0%,100% { transform: scale(1); filter: drop-shadow(0 0 15px #ff9900); }
+      50% { transform: scale(1.05); filter: drop-shadow(0 0 35px #ffaa33); }
+    }
+    .moon.hidden {
+      opacity: 0; /* fades when Rytober is active */
     }
 
     /* ---- STARS ---- */
@@ -101,40 +111,6 @@
       to { filter: drop-shadow(0 0 20px #ffaa33) drop-shadow(0 0 35px #ff3300); }
     }
 
-    /* Fog (H4R only) */
-    .fog {
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      opacity: 0;
-      transform: translateX(-50%);
-      border-radius: 50%;
-      transition: opacity 1.5s ease;
-      pointer-events: none;
-      background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
-    }
-    .fog.active { opacity: 0.6; }
-
-    .fog1 { width: 350px; height: 160px; animation: drift1 14s infinite ease-in-out; }
-    .fog2 { width: 420px; height: 200px; bottom: -20px; opacity: 0.5; animation: drift2 18s infinite ease-in-out; }
-    .fog3 { width: 300px; height: 140px; bottom: 10px; opacity: 0.4; animation: drift3 12s infinite ease-in-out; }
-
-    @keyframes drift1 {
-      0% { transform: translateX(-60%) scale(1); }
-      50% { transform: translateX(-40%) scale(1.1); }
-      100% { transform: translateX(-60%) scale(1); }
-    }
-    @keyframes drift2 {
-      0% { transform: translateX(-55%) scale(1); }
-      50% { transform: translateX(-35%) scale(1.15); }
-      100% { transform: translateX(-55%) scale(1); }
-    }
-    @keyframes drift3 {
-      0% { transform: translateX(-65%) scale(1); }
-      50% { transform: translateX(-45%) scale(1.05); }
-      100% { transform: translateX(-65%) scale(1); }
-    }
-
     /* Bats */
     .bat {
       position: absolute;
@@ -150,7 +126,7 @@
 <body>
   <div class="stage">
     <!-- Moon with PNG -->
-    <img src="assets/moon.png" class="moon" alt="Moon"/>
+    <img id="moon" src="assets/moon.png" class="moon" alt="Moon"/>
 
     <!-- Stars container -->
     <div id="stars"></div>
@@ -163,11 +139,6 @@
       <!-- Pumpkins -->
       <img src="assets/pumpkin.png" class="pumpkin left" alt="Pumpkin"/>
       <img src="assets/pumpkin.png" class="pumpkin right" alt="Pumpkin"/>
-
-      <!-- Fog for H4R -->
-      <div id="fogH1" class="fog fog1"></div>
-      <div id="fogH2" class="fog fog2"></div>
-      <div id="fogH3" class="fog fog3"></div>
     </div>
 
     <!-- Bats container -->
@@ -177,18 +148,18 @@
   <script>
     const h4r = document.getElementById("h4r");
     const rytober = document.getElementById("rytober");
-    const fogH = [fogH1, fogH2, fogH3];
+    const moon = document.getElementById("moon");
 
-    // Switch logos
+    // Switch logos and fade moon
     setInterval(() => {
       if (h4r.classList.contains("active")) {
         h4r.classList.remove("active");
         rytober.classList.add("active");
-        fogH.forEach(f => f.classList.remove("active"));
+        moon.classList.add("hidden");
       } else {
         rytober.classList.remove("active");
         h4r.classList.add("active");
-        fogH.forEach(f => f.classList.add("active"));
+        moon.classList.remove("hidden");
       }
     }, 6000);
 
