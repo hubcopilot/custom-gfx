@@ -86,14 +86,14 @@
       height: 160px;
       opacity: 0;
       transform: translateX(-50%);
-      background: radial-gradient(ellipse at center, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+      background: radial-gradient(ellipse at center, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 70%);
       border-radius: 50%;
       animation: drift 10s infinite ease-in-out;
       transition: opacity 1.5s ease;
     }
-
+    
     .fog.active {
-      opacity: 0.35;
+      opacity: 0.6; /* a bit stronger since it's white now */
     }
 
     @keyframes drift {
