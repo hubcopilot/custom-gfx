@@ -23,26 +23,6 @@
       overflow: hidden;
     }
 
-    /* ---- MOON ---- */
-    .moon {
-      position: absolute;
-      top: 40px;
-      right: 60px;
-      width: 180px;
-      height: auto;
-      z-index: 1;
-      opacity: 1;
-      transition: opacity 1.5s ease;
-      animation: pulseMoon 6s infinite ease-in-out;
-    }
-    @keyframes pulseMoon {
-      0%,100% { transform: scale(1); filter: drop-shadow(0 0 15px #ff9900); }
-      50% { transform: scale(1.05); filter: drop-shadow(0 0 35px #ffaa33); }
-    }
-    .moon.hidden {
-      opacity: 0; /* fades when Rytober is active */
-    }
-
     /* ---- STARS ---- */
     .star {
       position: absolute;
@@ -125,9 +105,6 @@
 </head>
 <body>
   <div class="stage">
-    <!-- Moon with PNG -->
-    <img id="moon" src="assets/moon.png" class="moon" alt="Moon"/>
-
     <!-- Stars container -->
     <div id="stars"></div>
 
@@ -148,18 +125,15 @@
   <script>
     const h4r = document.getElementById("h4r");
     const rytober = document.getElementById("rytober");
-    const moon = document.getElementById("moon");
 
     // Switch logos and fade moon
     setInterval(() => {
       if (h4r.classList.contains("active")) {
         h4r.classList.remove("active");
         rytober.classList.add("active");
-        moon.classList.add("hidden");
       } else {
         rytober.classList.remove("active");
         h4r.classList.add("active");
-        moon.classList.remove("hidden");
       }
     }, 6000);
 
